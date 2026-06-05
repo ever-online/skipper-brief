@@ -10,7 +10,7 @@ import { fetchMarineWeather, deriveTidalEvents } from "@/lib/weather";
 import { fetchShippingNotices } from "@/lib/vaarweg";
 import type { ForecastRequest, WeatherData } from "@/types";
 
-const REPORT_PRICE = 0.50;
+const REPORT_PRICE = 0.01;
 
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;

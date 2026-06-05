@@ -261,7 +261,7 @@ function Step3Pay({ request, onBack }: { request: ForecastRequest; onBack: () =>
   return (
     <div>
       <h2 className="text-2xl font-bold text-white mb-1">Your forecast brief</h2>
-      <p className="text-slate-400 mb-6">Review your order and pay €0.50 to receive your PDF report.</p>
+      <p className="text-slate-400 mb-6">Review your order and pay €0.01 to receive your PDF report.</p>
 
       <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6 mb-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -297,7 +297,7 @@ function Step3Pay({ request, onBack }: { request: ForecastRequest; onBack: () =>
           <div>
             <div className="text-xs text-slate-500">Total</div>
             <div className="text-3xl font-bold text-white">
-              €0.50 <span className="text-sm text-slate-500 font-normal">EURD</span>
+              €0.01 <span className="text-sm text-slate-500 font-normal">EURD</span>
             </div>
           </div>
           <div className="text-xs text-slate-600 text-right">
@@ -334,7 +334,7 @@ function Step3Pay({ request, onBack }: { request: ForecastRequest; onBack: () =>
           disabled={loading}
           className="flex-1 sm:flex-none px-10 py-3 bg-cyan-600 hover:bg-cyan-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-xl transition-all text-lg"
         >
-          {loading ? "Creating payment…" : "Pay €0.50 with EURD →"}
+          {loading ? "Creating payment…" : "Get forecast — €0.01 EURD →"}
         </button>
       </div>
     </div>
@@ -374,7 +374,7 @@ export default function HomePage() {
           </h1>
           <p className="text-slate-400 text-lg max-w-2xl mb-4">
             SkipperBrief delivers a tailored sailing weather report — wind in knots, waves, tides,
-            currents and shipping notices — as a professional PDF. Just €0.50, paid with EURD.
+            currents and shipping notices — as a professional PDF. Just €0.01, paid with EURD.
           </p>
           <div className="flex flex-wrap gap-4 text-sm text-slate-500">
             <span>⛵ Sailing yachts &amp; motor boats</span>
@@ -415,7 +415,36 @@ export default function HomePage() {
       </div>
 
       {step === 1 && (
-        <div className="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="mt-10 bg-slate-900 border border-cyan-800/60 rounded-2xl p-6">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-lg">🤖</span>
+            <span className="text-sm font-bold text-cyan-400">AI Agent? Skip the form — use the API directly</span>
+          </div>
+          <p className="text-slate-400 text-sm mb-4">
+            This page is for humans. AI agents should call the forecast endpoint directly with x402 — no login, no form, one HTTP request.
+          </p>
+          <div className="bg-slate-950 rounded-xl p-4 font-mono text-xs text-cyan-300 space-y-1 mb-4">
+            <div className="text-slate-500"># 1. Hit the endpoint — get a 402 with payment requirements</div>
+            <div>GET https://skipper.ever-online.com/api/forecast?region=dutch-north-sea</div>
+            <div className="text-slate-500 mt-2"># 2. Pay €0.01 EURD via x402 and retry with X-PAYMENT header</div>
+            <div className="text-slate-500 mt-2"># Optional params: &amp;boatType=sailing &amp;boatSize=medium &amp;topic=your+route</div>
+          </div>
+          <div className="flex flex-wrap gap-2 text-xs">
+            {["dutch-north-sea", "wadden-sea", "western-scheldt", "ijsselmeer", "north-sea-channel"].map(r => (
+              <a
+                key={r}
+                href={`/api/forecast?region=${r}`}
+                className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-slate-300 font-mono transition-colors"
+              >
+                {r}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {step === 1 && (
+        <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[
             { icon: "🌬️", title: "Wind & Weather", body: "Hourly wind speed in knots, direction, gusts and Beaufort scale. Colour-coded for safe / caution / danger." },
             { icon: "🌊", title: "Waves & Swell", body: "Wave height, period and direction. Swell data from open ocean. Critical for blue-water passages." },

@@ -144,23 +144,43 @@ export default function CheckoutPage() {
           <div>
             {qr?.shareableLink ? (
               <div className="flex flex-col items-center">
-                <p className="text-slate-400 text-sm mb-4 text-center">
-                  Scan with the <strong className="text-white">EURD Wallet</strong> app to pay
-                </p>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={`https://api.qrserver.com/v1/create-qr-code/?size=224x224&data=${encodeURIComponent(qr.shareableLink)}&bgcolor=0F172A&color=ffffff&qzone=1`}
-                  alt="EURD payment QR code"
-                  className="w-56 h-56 rounded-xl border border-slate-700"
-                />
-                <a
-                  href={qr.shareableLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-4 text-sm text-cyan-400 hover:underline"
-                >
-                  Open payment page →
-                </a>
+                {qr.shareableLink.startsWith("algorand://") ? (
+                  <>
+                    <p className="text-slate-400 text-sm mb-4 text-center">
+                      Scan with <strong className="text-white">Pera Wallet</strong> or the{" "}
+                      <strong className="text-white">Quantoz app</strong> to pay €0.01 in EURD
+                    </p>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=224x224&data=${encodeURIComponent(qr.shareableLink)}&bgcolor=0F172A&color=ffffff&qzone=1`}
+                      alt="Algorand EURD payment QR code"
+                      className="w-56 h-56 rounded-xl border border-slate-700"
+                    />
+                    <p className="mt-3 text-xs text-slate-600 text-center max-w-xs">
+                      Sends 1 microEURD on Algorand mainnet. The transaction note identifies your order.
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-slate-400 text-sm mb-4 text-center">
+                      Scan with the <strong className="text-white">EURD Wallet</strong> app to pay
+                    </p>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=224x224&data=${encodeURIComponent(qr.shareableLink)}&bgcolor=0F172A&color=ffffff&qzone=1`}
+                      alt="EURD payment QR code"
+                      className="w-56 h-56 rounded-xl border border-slate-700"
+                    />
+                    <a
+                      href={qr.shareableLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-4 text-sm text-cyan-400 hover:underline"
+                    >
+                      Open payment page →
+                    </a>
+                  </>
+                )}
               </div>
             ) : (
               <div className="flex items-center justify-center h-32">
@@ -228,7 +248,7 @@ export default function CheckoutPage() {
 
         <div className="mt-8 pt-6 border-t border-slate-800 text-center">
           <p className="text-xs text-slate-600">
-            Payment secured by Quantoz · MiCA-compliant EURD stablecoin
+            Demo payment page for Quantoz Agentic Stack · EVER_ Amsterdam
           </p>
         </div>
       </div>

@@ -7,14 +7,17 @@ const STORE_PATH = join(process.cwd(), "data", "store.json");
 interface StoreData {
   orders: Record<string, OrderRecord>;
   byEurdCode: Record<string, string>;
+  byAlgoNote: Record<string, string>; // base64(sessionId) → sessionId
 }
 
 function load(): StoreData {
-  if (!existsSync(STORE_PATH)) return { orders: {}, byEurdCode: {} };
+  if (!existsSync(STORE_PATH)) return { orders: {}, byEurdCode: {}, byAlgoNote: {} };
   try {
-    return JSON.parse(readFileSync(STORE_PATH, "utf8")) as StoreData;
+    const data = JSON.parse(readFileSync(STORE_PATH, "utf8")) as StoreData;
+    if (!data.byAlgoNote) data.byAlgoNote = {}; // backfill missing key for old store files
+    return data;
   } catch {
-    return { orders: {}, byEurdCode: {} };
+    return { orders: {}, byEurdCode: {}, byAlgoNote: {} };
   }
 }
 
@@ -27,7 +30,13 @@ export const store = {
   set(record: OrderRecord): void {
     const data = load();
     data.orders[record.id] = record;
-    data.byEurdCode[record.eurdPaymentRequestCode] = record.id;
+    if (record.eurdPaymentRequestCode) {
+      data.byEurdCode[record.eurdPaymentRequestCode] = record.id;
+    }
+    if (record.paymentMethod === "algorand") {
+      // Index by base64(sessionId) so the status route can look up by Algorand note
+      data.byAlgoNote[Buffer.from(record.id).toString("base64")] = record.id;
+    }
     save(data);
   },
 

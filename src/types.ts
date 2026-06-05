@@ -75,7 +75,14 @@ export interface OrderRecord {
   id: string;
   forecastRequest: ForecastRequest;
   status: OrderStatus;
-  eurdPaymentRequestCode: string;
+  /** "eurd" = Quantoz managed-account payment; "algorand" = on-chain EURD QR */
+  paymentMethod: "eurd" | "algorand";
+  /** Set when paymentMethod === "eurd" */
+  eurdPaymentRequestCode?: string;
+  /** Set when paymentMethod === "algorand" — merchant Algorand address */
+  algorandMerchantAddress?: string;
+  /** Confirmed Algorand transaction ID */
+  algorandTxId?: string;
   qrCodeString: string;
   shareableLink: string;
   amount: number;
