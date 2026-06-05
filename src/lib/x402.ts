@@ -6,7 +6,7 @@ const EXPIRY_MINUTES = Number(process.env.X402_EXPIRY_MINUTES ?? 5);
 // Algorand EURD on-chain config (optional — if not set, only the managed-account option is offered)
 const ALGO_MERCHANT_ADDRESS = process.env.ALGORAND_MERCHANT_ADDRESS ?? "";
 const ALGO_FACILITATOR_URL =
-  process.env.ALGORAND_FACILITATOR_URL ?? "https://x402algo.ever-online.com";
+  process.env.ALGORAND_FACILITATOR_URL ?? "https://x402algo.ai.quantozpay.com";
 const EURD_ASA_ID = process.env.EURD_ASA_ID ?? "1221682136";
 // EURD has 2 decimal places — multiply EUR amount by 100 to get atomic units
 const EURD_DECIMALS = 2;
