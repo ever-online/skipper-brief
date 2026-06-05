@@ -18,7 +18,7 @@ A sailing weather AI that sells tailored passage briefs for €0.50 — paid wit
 - [Tailwind CSS](https://tailwindcss.com)
 - [Claude claude-sonnet-4-6](https://anthropic.com) — writes the AI sailing brief
 - [Open-Meteo Marine API](https://open-meteo.com) — wind, waves, swell, ocean currents
-- [Quantoz EURD](https://dev.quantoz.ai) — x402 payment gate
+- [Quantoz EURD](https://docs.ai.quantozpay.com) — x402 payment gate
 
 ---
 
@@ -52,7 +52,7 @@ const pdf = await res.arrayBuffer();
 ### Prerequisites
 
 - Node.js 22+
-- A [Quantoz account](https://dev.quantoz.ai/getting-started/signup/) with API key and account code
+- A [Quantoz account](https://docs.ai.quantozpay.com/getting-started/signup/) with API key and account code
 - An [Anthropic API key](https://console.anthropic.com)
 
 ### Setup
@@ -108,10 +108,10 @@ npm run dev
 3. Agent pays via Quantoz API, retries with `X-PAYMENT` proof header
 4. Server verifies → returns PDF bytes
 
-See the [Quantoz x402 docs](https://dev.quantoz.ai/x402/agent/) for the full agent integration guide.
+See the [Quantoz x402 docs](https://docs.ai.quantozpay.com/x402/agent/) for the full agent integration guide.
 
 ---
 
 ## Docs
 
-Full integration documentation at [dev.quantoz.ai](https://dev.quantoz.ai)
+Full integration documentation at [docs.ai.quantozpay.com](https://docs.ai.quantozpay.com)
