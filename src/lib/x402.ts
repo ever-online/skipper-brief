@@ -146,7 +146,7 @@ export async function verifyProof(
     // Bridge proof: agent paid via Quantoz EURO→Algorand bridge (has transactionCode)
     // Direct proof: agent signed an on-chain tx directly (has transaction bytes)
     if (typeof proof.payload?.transactionCode === "string") {
-      return verifyAlgorandBridgeProof(proof.payload as { transactionCode: string; payTo: string; asset: string }, context.amount);
+      return verifyAlgorandBridgeProof(proof.payload as { transactionCode: string; payTo: string; asset: string; blockchainTxId?: string }, context.amount);
     }
     return verifyAlgorandProof(xPayment, context.amount, context.resource);
   }
@@ -263,7 +263,7 @@ const BRIDGE_POLL_MAX_ATTEMPTS = 10; // up to 30 seconds waiting for blockchainT
  * transfer to the merchant address.
  */
 async function verifyAlgorandBridgeProof(
-  payload: { transactionCode: string; payTo: string; asset: string },
+  payload: { transactionCode: string; payTo: string; asset: string; blockchainTxId?: string },
   amountEur: number
 ): Promise<VerifyResult> {
   const { transactionCode, payTo, asset } = payload;
@@ -277,34 +277,29 @@ async function verifyAlgorandBridgeProof(
   }
 
   const atomicAmount = Math.round(amountEur * Math.pow(10, EURD_DECIMALS));
-  const client = new EurdClient();
 
-  // ── Step 1: Poll Quantoz API until blockchainTxId is available ──────────────
-  let blockchainTxId: string | undefined;
+  // ── Step 1: Get blockchainTxId ───────────────────────────────────────────────
+  // Use from proof directly if available (fast path — no API call needed).
+  // Otherwise poll the Quantoz API until it appears (requires EURD_API_KEY).
+  let blockchainTxId: string | undefined = payload.blockchainTxId;
 
-  for (let attempt = 0; attempt < BRIDGE_POLL_MAX_ATTEMPTS; attempt++) {
-    if (attempt > 0) {
-      await new Promise((r) => setTimeout(r, BRIDGE_POLL_INTERVAL_MS));
-    }
-
-    try {
-      const result = await client.getTransaction(transactionCode);
-      const tx: TransactionListItem | undefined = result?.items?.[0];
-
-      if (!tx) {
-        return { ok: false, reason: `Transaction ${transactionCode} not found` };
+  if (!blockchainTxId) {
+    const client = new EurdClient();
+    for (let attempt = 0; attempt < BRIDGE_POLL_MAX_ATTEMPTS; attempt++) {
+      if (attempt > 0) {
+        await new Promise((r) => setTimeout(r, BRIDGE_POLL_INTERVAL_MS));
       }
-
-      if (tx.status === "Cancelled" || tx.status === "Expired") {
-        return { ok: false, reason: `Transaction ${tx.status.toLowerCase()}` };
+      try {
+        const result = await client.getTransaction(transactionCode);
+        const tx: TransactionListItem | undefined = result?.items?.[0];
+        if (!tx) return { ok: false, reason: `Transaction ${transactionCode} not found` };
+        if (tx.status === "Cancelled" || tx.status === "Expired") {
+          return { ok: false, reason: `Transaction ${tx.status.toLowerCase()}` };
+        }
+        if (tx.blockchainTxId) { blockchainTxId = tx.blockchainTxId; break; }
+      } catch {
+        // API error — keep polling
       }
-
-      if (tx.blockchainTxId) {
-        blockchainTxId = tx.blockchainTxId;
-        break;
-      }
-    } catch {
-      // API error — keep polling
     }
   }
 
